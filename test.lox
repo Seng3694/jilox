@@ -1,10 +1,33 @@
-var a = "global";
-{
-    fun showA() {
-        print a;
+
+class Person {
+    init(name) {
+        this.name = name;
     }
 
-    showA();
-    var a = "block";
-    showA();
+    say(text) {
+       print this.name + " says: " + text;
+    }
 }
+
+fun testFunction() {
+    print "disgustang";
+}
+
+var me = Person("Seng");
+me.say("Hello World!");
+
+var sengSays = me.say;
+sengSays("wow");
+
+me.say = testFunction;
+me.say();
+
+me.name = ":o";
+print me.name;
+
+me = Person("Seng");
+me.name = testFunction;
+me.name();
+
+//this doesn't work obviously
+//me.say("hello");
