@@ -7,36 +7,36 @@ import java.util.List;
 
 public class GenerateAst {
     public static void main(String[] args) throws IOException {
-        if(args.length != 1) {
+        if (args.length != 1) {
             System.err.println("Usage: generate_ast <output directory>");
             System.exit(64);
         }
         String outputDir = args[0];
         defineAst(outputDir, "Expr", Arrays.asList(
-           "Assign   : Token name, Expr value",
-           "Binary   : Expr left, Token operator, Expr right",
-           "Call     : Expr callee, Token paren, List<Expr> arguments",
-           "Get      : Expr object, Token name",
-           "Grouping : Expr expression",
-           "Literal  : Object value",
-           "Logical  : Expr left, Token operator, Expr right",
-           "Set      : Expr object, Token name, Expr value",
-           "Super    : Token keyword, Token method",
-           "This     : Token keyword",
-           "Unary    : Token operator, Expr right",
-           "Variable : Token name"
+                "Assign   : Token name, Expr value",
+                "Binary   : Expr left, Token operator, Expr right",
+                "Call     : Expr callee, Token paren, List<Expr> arguments",
+                "Get      : Expr object, Token name",
+                "Grouping : Expr expression",
+                "Literal  : Object value",
+                "Logical  : Expr left, Token operator, Expr right",
+                "Set      : Expr object, Token name, Expr value",
+                "Super    : Token keyword, Token method",
+                "This     : Token keyword",
+                "Unary    : Token operator, Expr right",
+                "Variable : Token name"
         ));
 
         defineAst(outputDir, "Stmt", Arrays.asList(
-           "Block      : List<Stmt> statements",
-           "Class      : Token name, Expr.Variable superclass, List<Stmt.Function> methods",
-           "Expression : Expr expression",
-           "Function   : Token name, List<Token> params, List<Stmt> body",
-           "If         : Expr condition, Stmt thenBranch, Stmt elseBranch",
-           "Print      : Expr expression",
-           "Return     : Token keyword, Expr value",
-           "Var        : Token name, Expr initializer",
-           "While      : Expr condition, Stmt body"
+                "Block      : List<Stmt> statements",
+                "Class      : Token name, Expr.Variable superclass, List<Stmt.Function> methods",
+                "Expression : Expr expression",
+                "Function   : Token name, List<Token> params, List<Stmt> body",
+                "If         : Expr condition, Stmt thenBranch, Stmt elseBranch",
+                "Print      : Expr expression",
+                "Return     : Token keyword, Expr value",
+                "Var        : Token name, Expr initializer",
+                "While      : Expr condition, Stmt body"
         ));
     }
 
@@ -52,7 +52,7 @@ public class GenerateAst {
 
         defineVisitor(writer, baseName, types);
 
-        for(String type : types) {
+        for (String type : types) {
             String className = type.split(":")[0].trim();
             String fields = type.split(":")[1].trim();
             defineType(writer, baseName, className, fields);
@@ -65,7 +65,7 @@ public class GenerateAst {
         writer.close();
     }
 
-    private  static void defineVisitor(PrintWriter writer, String baseName, List<String> types) {
+    private static void defineVisitor(PrintWriter writer, String baseName, List<String> types) {
         writer.println("\tinterface Visitor<R> {");
 
         for (String type : types) {

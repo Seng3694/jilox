@@ -29,7 +29,7 @@ public class Lox {
         run(new String(bytes, Charset.defaultCharset()));
 
         if (hadError) System.exit(65);
-        if(hadRuntimeError) System.exit(70);
+        if (hadRuntimeError) System.exit(70);
     }
 
     private static void runPrompt() throws IOException {
@@ -51,12 +51,12 @@ public class Lox {
         Parser parser = new Parser(tokens);
         List<Stmt> statements = parser.parse();
 
-        if(hadError) return;
+        if (hadError) return;
 
         Resolver resolver = new Resolver(interpreter);
         resolver.resolve(statements);
 
-        if(hadError) return;
+        if (hadError) return;
 
         interpreter.interpret(statements);
     }
@@ -71,7 +71,7 @@ public class Lox {
     }
 
     static void error(Token token, String message) {
-        if(token.type == TokenType.EOF) {
+        if (token.type == TokenType.EOF) {
             report(token.line, " at end", message);
         } else {
             report(token.line, " at '" + token.lexeme + "'", message);

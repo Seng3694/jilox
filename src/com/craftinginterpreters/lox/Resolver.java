@@ -29,7 +29,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     }
 
     void resolve(List<Stmt> statements) {
-        for(Stmt statement : statements) {
+        for (Stmt statement : statements) {
             resolve(statement);
         }
     }
@@ -52,7 +52,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     public Void visitCallExpr(Expr.Call expr) {
         resolve(expr.callee);
 
-        for(Expr argument : expr.arguments) {
+        for (Expr argument : expr.arguments) {
             resolve(argument);
         }
 
@@ -92,9 +92,9 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitSuperExpr(Expr.Super expr) {
-        if(currentClass == ClassType.NONE) {
+        if (currentClass == ClassType.NONE) {
             Lox.error(expr.keyword, "Can't use 'super' outside of a class.");
-        } else if(currentClass != ClassType.SUBCLASS) {
+        } else if (currentClass != ClassType.SUBCLASS) {
             Lox.error(expr.keyword, "Can't use 'super' in a class with no superclass.");
         }
 
@@ -104,7 +104,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitThisExpr(Expr.This expr) {
-        if(currentClass == ClassType.NONE) {
+        if (currentClass == ClassType.NONE) {
             Lox.error(expr.keyword, "Can't use 'this' outside of a class.");
             return null;
         }
@@ -121,7 +121,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitVariableExpr(Expr.Variable expr) {
-        if(!scopes.isEmpty() && scopes.peek().get(expr.name.lexeme) == Boolean.FALSE) {
+        if (!scopes.isEmpty() && scopes.peek().get(expr.name.lexeme) == Boolean.FALSE) {
             Lox.error(expr.name, "Can't read local variable in its own initializer.");
         }
 
@@ -145,16 +145,16 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         declare(stmt.name);
         define(stmt.name);
 
-        if(stmt.superclass != null && stmt.name.lexeme.equals(stmt.superclass.name.lexeme)) {
+        if (stmt.superclass != null && stmt.name.lexeme.equals(stmt.superclass.name.lexeme)) {
             Lox.error(stmt.superclass.name, "A class can't inherit from itself.");
         }
 
-        if(stmt.superclass != null) {
+        if (stmt.superclass != null) {
             currentClass = ClassType.SUBCLASS;
             resolve(stmt.superclass);
         }
 
-        if(stmt.superclass != null) {
+        if (stmt.superclass != null) {
             beginScope();
             scopes.peek().put("super", true);
         }
@@ -164,7 +164,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
         for (Stmt.Function method : stmt.methods) {
             FunctionType declaration = FunctionType.METHOD;
-            if(method.name.lexeme.equals("init")) {
+            if (method.name.lexeme.equals("init")) {
                 declaration = FunctionType.INITIALIZER;
             }
             resolveFunction(method, declaration);
@@ -172,7 +172,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
         endScope();
 
-        if(stmt.superclass != null) {
+        if (stmt.superclass != null) {
             endScope();
         }
 
@@ -199,7 +199,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     public Void visitIfStmt(Stmt.If stmt) {
         resolve(stmt.condition);
         resolve(stmt.thenBranch);
-        if(stmt.elseBranch != null) resolve(stmt.elseBranch);
+        if (stmt.elseBranch != null) resolve(stmt.elseBranch);
         return null;
     }
 
@@ -211,11 +211,11 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitReturnStmt(Stmt.Return stmt) {
-        if(currentFunction == FunctionType.NONE) {
+        if (currentFunction == FunctionType.NONE) {
             Lox.error(stmt.keyword, "Can't return from top-level code.");
         }
-        if(stmt.value != null) {
-            if(currentFunction == FunctionType.INITIALIZER) {
+        if (stmt.value != null) {
+            if (currentFunction == FunctionType.INITIALIZER) {
                 Lox.error(stmt.keyword, "Can't return a value from an initializer.");
             }
             resolve(stmt.value);
@@ -227,8 +227,9 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     @Override
     public Void visitVarStmt(Stmt.Var stmt) {
         declare(stmt.name);
-        if(stmt.initializer != null){
-            resolve(stmt.initializer);;
+        if (stmt.initializer != null) {
+            resolve(stmt.initializer);
+            ;
         }
         define(stmt.name);
         return null;
@@ -244,6 +245,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     private void resolve(Stmt stmt) {
         stmt.accept(this);
     }
+
     private void resolve(Expr expr) {
         expr.accept(this);
     }
@@ -257,23 +259,23 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     }
 
     private void declare(Token name) {
-        if(scopes.isEmpty()) return;
+        if (scopes.isEmpty()) return;
 
         Map<String, Boolean> scope = scopes.peek();
-        if(scope.containsKey(name.lexeme)) {
+        if (scope.containsKey(name.lexeme)) {
             Lox.error(name, "Already a variable with this name in this scope.");
         }
         scope.put(name.lexeme, false);
     }
 
     private void define(Token name) {
-        if(scopes.isEmpty()) return;
+        if (scopes.isEmpty()) return;
         scopes.peek().put(name.lexeme, true);
     }
 
     private void resolveLocal(Expr expr, Token name) {
         for (int i = scopes.size() - 1; i >= 0; i--) {
-            if(scopes.get(i).containsKey(name.lexeme)) {
+            if (scopes.get(i).containsKey(name.lexeme)) {
                 interpreter.resolve(expr, scopes.size() - 1 - i);
             }
         }
@@ -284,7 +286,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         currentFunction = type;
 
         beginScope();
-        for(Token param : function.params) {
+        for (Token param : function.params) {
             declare(param);
             define(param);
         }
