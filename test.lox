@@ -1,33 +1,34 @@
-
 class Person {
-    init(name) {
+    init(name, age) {
         this.name = name;
+        this.age = age;
     }
 
-    say(text) {
-       print this.name + " says: " + text;
+    toString() {
+        return this.name + " " + this.age;
     }
 }
 
-fun testFunction() {
-    print "disgustang";
+class Customer < Person {
+    init(name, age, id) {
+        super.init(name, age);
+        this.id = id;
+    }
+
+    toString() {
+        return "[" + this.id + "]: " + super.toString();
+    }
 }
 
-var me = Person("Seng");
-me.say("Hello World!");
+var jane = Customer("Jane", 30, 1);
+fun printJane() {
+    print jane.toString();
+}
 
-var sengSays = me.say;
-sengSays("wow");
+var pj = printJane;
+var age = jane.age;
 
-me.say = testFunction;
-me.say();
-
-me.name = ":o";
-print me.name;
-
-me = Person("Seng");
-me.name = testFunction;
-me.name();
-
-//this doesn't work obviously
-//me.say("hello");
+for(var i = 0; i < 10; i = i + 1) {
+    jane.age = age + i;
+    pj();
+}
